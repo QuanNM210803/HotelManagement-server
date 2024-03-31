@@ -7,7 +7,6 @@ import com.example.hotelmanagement.model.Room;
 import com.example.hotelmanagement.response.BookingResponse;
 import com.example.hotelmanagement.response.RoomResponse;
 import com.example.hotelmanagement.service.BookingService;
-import com.example.hotelmanagement.service.IBookingService;
 import com.example.hotelmanagement.service.IRoomService;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
