@@ -4,6 +4,7 @@ import com.example.hotelmanagement.exception.PhotoRetrievalException;
 import com.example.hotelmanagement.exception.ResourceNotFoundException;
 import com.example.hotelmanagement.model.BookedRoom;
 import com.example.hotelmanagement.model.Room;
+import com.example.hotelmanagement.request.UpdateRoomRequest;
 import com.example.hotelmanagement.response.BookingResponse;
 import com.example.hotelmanagement.response.RoomResponse;
 import com.example.hotelmanagement.service.BookingService;
@@ -37,9 +38,10 @@ public class RoomController {
     @PostMapping("/add/new-room")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> addNewRoom(
-            @RequestParam("photo")MultipartFile photo,
-            @RequestParam("roomType") String roomType,
-            @RequestParam("roomPrice")BigDecimal roomPrice) throws SQLException, IOException {
+                        @ModelAttribute UpdateRoomRequest updateRoomRequest) throws SQLException, IOException {
+        MultipartFile photo = updateRoomRequest.getPhoto();
+        String roomType = updateRoomRequest.getRoomType();
+        BigDecimal roomPrice = updateRoomRequest.getRoomPrice();
         Room savedRoom=roomService.addNewRoom(photo,roomType,roomPrice);
         RoomResponse response=new RoomResponse(savedRoom.getId(),savedRoom.getRoomType(),savedRoom.getRoomPrice());
         return ResponseEntity.ok(response);
@@ -69,12 +71,15 @@ public class RoomController {
         roomService.deleteRoom(roomId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     @PutMapping("/update/{roomId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public  ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId,
-                                                    @RequestParam(required = false) String roomType,
-                                                    @RequestParam(required = false) BigDecimal roomPrice,
-                                                    @RequestParam(required = false) MultipartFile photo) throws IOException, SQLException {
+                                                    @ModelAttribute UpdateRoomRequest updateRoomRequest) throws IOException, SQLException {
+        MultipartFile photo = updateRoomRequest.getPhoto();
+        String roomType = updateRoomRequest.getRoomType();
+        BigDecimal roomPrice = updateRoomRequest.getRoomPrice();
+        System.out.println(photo+" "+roomType+" "+roomPrice);
         byte[] photoBytes=photo!=null && !photo.isEmpty()
                 ? photo.getBytes() : roomService.getRoomPhotoByRoomId(roomId);
         Blob photoBlob=photoBytes!=null && photoBytes.length>0
